@@ -1,0 +1,68 @@
+{
+  "target_chembl_id": "CHEMBL332",
+  "database_release": "ChEMBL_37",
+  "database_release_date": "2026-05-01",
+  "license": "CC BY-SA 3.0",
+  "source": "ChEMBL, EMBL-EBI",
+  "queries": {
+    "status": "https://www.ebi.ac.uk/chembl/api/data/status.json",
+    "assays": "https://www.ebi.ac.uk/chembl/api/data/assay.json?target_chembl_id=CHEMBL332&limit=500",
+    "all_activities": "https://www.ebi.ac.uk/chembl/api/data/activity.json?target_chembl_id=CHEMBL332&limit=1"
+  },
+  "all_target_activities": 7285,
+  "endpoints": {
+    "IC50": {
+      "all_measurements": 4269,
+      "exact_measurements_nm": 2361,
+      "selected_measurements": 665,
+      "unique_chembl_molecule_ids": 601,
+      "unique_assay_ids": 105,
+      "unique_document_ids": 98,
+      "largest_assays": [
+        {
+          "assay_chembl_id": "CHEMBL2338838",
+          "unique_chembl_molecule_ids": 73
+        },
+        {
+          "assay_chembl_id": "CHEMBL867736",
+          "unique_chembl_molecule_ids": 26
+        },
+        {
+          "assay_chembl_id": "CHEMBL2342140",
+          "unique_chembl_molecule_ids": 21
+        }
+      ],
+      "queries": {
+        "all_measurements": "https://www.ebi.ac.uk/chembl/api/data/activity.json?target_chembl_id=CHEMBL332&standard_type=IC50&limit=1",
+        "exact_measurements_nm": "https://www.ebi.ac.uk/chembl/api/data/activity.json?target_chembl_id=CHEMBL332&standard_type=IC50&standard_relation=%3D&standard_units=nM&limit=500"
+      }
+    },
+    "Ki": {
+      "all_measurements": 2168,
+      "exact_measurements_nm": 783,
+      "selected_measurements": 226,
+      "unique_chembl_molecule_ids": 193,
+      "unique_assay_ids": 56,
+      "unique_document_ids": 45,
+      "largest_assays": [
+        {
+          "assay_chembl_id": "CHEMBL872347",
+          "unique_chembl_molecule_ids": 20
+        },
+        {
+          "assay_chembl_id": "CHEMBL2382708",
+          "unique_chembl_molecule_ids": 12
+        },
+        {
+          "assay_chembl_id": "CHEMBL708143",
+          "unique_chembl_molecule_ids": 11
+        }
+      ],
+      "queries": {
+        "all_measurements": "https://www.ebi.ac.uk/chembl/api/data/activity.json?target_chembl_id=CHEMBL332&standard_type=Ki&limit=1",
+        "exact_measurements_nm": "https://www.ebi.ac.uk/chembl/api/data/activity.json?target_chembl_id=CHEMBL332&standard_type=Ki&standard_relation=%3D&standard_units=nM&limit=500"
+      }
+    }
+  },
+  "retrieved_at_utc": "2026-11-17T22:08:01+00:00"
+}

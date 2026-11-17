@@ -1,6 +1,6 @@
 # Monaisec Molecular Lab
 
-Vitrine indépendante en français. Le site est statique, avec quatre pages dans `dist/` et des ressources locales. Les six petites molécules et les deux complexes sont disponibles sans requête PubChem en direct. La recherche de composés externes utilise l’API PUG REST de PubChem. La génération d’un conformère à partir d’un SMILES tourne dans le navigateur, avec OpenChemLib et une graine fixe. Les imports restent côté navigateur.
+Vitrine indépendante en français. Le site est statique, avec cinq pages dans `dist/` et des ressources locales. Les six petites molécules et les deux complexes sont disponibles sans requête PubChem en direct. La recherche de composés externes utilise l’API PUG REST de PubChem. La génération d’un conformère à partir d’un SMILES tourne dans le navigateur, avec OpenChemLib et une graine fixe. Les imports restent côté navigateur.
 
 ## Aperçu local
 
@@ -10,9 +10,13 @@ Depuis le dossier extrait, lancez `python3 -m http.server 8000 --directory dist`
 
 1. Placez ce README et `dist/` dans le dépôt du Molecular Lab.
 2. Créez un projet Cloudflare Pages séparé et connectez ce dépôt. Sélectionnez la branche de production, laissez la commande de build vide et définissez `dist` comme répertoire de sortie.
-3. Validez les quatre pages sur l’URL fournie par Pages, puis ajoutez `lab.monaisec.com` dans les domaines personnalisés du projet. Confirmez le CNAME proposé par Cloudflare et attendez que le certificat HTTPS soit actif.
+3. Validez les pages sur l’URL fournie par Pages, puis ajoutez `lab.monaisec.com` dans les domaines personnalisés du projet. Confirmez le CNAME proposé par Cloudflare et attendez que le certificat HTTPS soit actif.
 
 Documentation [intégration Git](https://developers.cloudflare.com/pages/get-started/git-integration/) et [sous-domaines](https://developers.cloudflare.com/pages/configuration/custom-domains/).
+
+## Audit ChEMBL de la MMP-1
+
+La [note de recherche](https://lab.monaisec.com/mmp1-benchmark.html) présente les résultats d’inventaire et le protocole d’évaluation proposé. Le [snapshot JSON](dist/assets/research/mmp1-audit-v1.json) conserve les effectifs et la provenance. Pour recalculer l’audit tant que l’API sert ChEMBL 37, exécutez `python3 research/audit_mmp1.py --release ChEMBL_37`. Le script utilise la bibliothèque standard de Python.
 
 ## Sources et composants
 

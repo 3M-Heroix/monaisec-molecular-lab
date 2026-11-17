@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Audit et protocole MMP‑1 · Monaisec Molecular Lab</title>
+  <meta name="description" content="Audit reproductible de ChEMBL 37 et protocole pour classer des ligands de la MMP‑1 humaine avec un budget de calcul limité.">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="icon" href="assets/favicon.png" type="image/png">
+  <link rel="stylesheet" href="assets/fonts.css">
+  <link rel="stylesheet" href="assets/site.css">
+  <link rel="stylesheet" href="assets/research-note.css">
+</head>
+<body>
+  <a class="skip" href="#main">Aller au contenu</a>
+  <header class="mast">
+    <div class="wrap topbar">
+      <a class="brand" href="index.html" aria-label="Monaisec Molecular Lab, accueil">
+        <span class="brand-icon"><img src="assets/logo-mark.webp" alt="" width="30" height="20"></span>
+        <span><strong>MONAISEC</strong><small>Molecular Lab</small></span>
+      </a>
+      <nav class="navigation" aria-label="Navigation principale"><a href="index.html">Accueil</a>
+<a href="atelier.html">Atelier 3D</a>
+<a href="cosmetique.html">Cosmétique</a>
+<a href="recherche.html">Recherche</a></nav>
+      <a class="button button-small top-action" href="atelier.html">Ouvrir le labo <span aria-hidden="true">→</span></a>
+    </div>
+  </header>
+  <main id="main">
+  <article class="wrap research-note" aria-labelledby="note-title">
+    <header class="note-header">
+      <p class="eyebrow"><span class="signal"></span> Note de recherche · MMP‑1</p>
+      <h1 id="note-title">Prioriser des ligands de la <em>MMP‑1 humaine</em></h1>
+      <p class="lede">Audit de ChEMBL et protocole d’évaluation d’un criblage à faible coût de calcul.</p>
+      <p class="note-byline">Monaisec Molecular Lab · Version 1 · <time datetime="2026-11-17">17 novembre 2026</time></p>
+    </header>
+    <nav class="note-nav" aria-label="Sommaire de la note">
+      <a href="#audit">Audit des données</a>
+      <a href="#protocole">Protocole</a>
+      <a href="#reproductibilite">Reproductibilité</a>
+      <a href="#references">Références</a>
+    </nav>
+
+    <section class="note-section" aria-labelledby="objectif">
+      <h2 id="objectif">Question de recherche</h2>
+      <p>Avec un budget de calcul limité, peut-on retrouver des ligands actifs de la MMP‑1 humaine dans les dix premières positions d’un classement ? La première étape inventorie les données publiques. Le protocole proposé évalue ensuite la géométrie des poses et la qualité du classement comme deux résultats distincts. À ce stade, l’audit et les mesures dans les structures de référence sont disponibles. Le redocking, les performances de classement et la validation expérimentale restent à réaliser.</p>
+    </section>
+
+    <section class="note-section" aria-labelledby="audit">
+      <h2 id="audit">Audit des données ChEMBL</h2>
+      <p>ChEMBL 37 contient <strong>7&#8239;285 enregistrements d’activité</strong> associés à la cible humaine <code>CHEMBL332</code>. Les IC<sub>50</sub> et <i>K</i><sub>i</sub> sont comptés séparément, car ils décrivent des grandeurs différentes. <a class="note-ref" href="#ref-chembl">[1]</a></p>
+      <div class="note-table">
+        <table>
+          <caption>Effectifs par type de mesure, avant et après filtrage</caption>
+          <thead><tr><th scope="col">Étape</th><th scope="col">IC<sub>50</sub></th><th scope="col"><i>K</i><sub>i</sub></th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Enregistrements, tous formats</th><td>4&#8239;269</td><td>2&#8239;168</td></tr>
+            <tr><th scope="row">Mesures exactes en nM</th><td>2&#8239;361</td><td>783</td></tr>
+            <tr><th scope="row">Mesures retenues</th><td>665</td><td>226</td></tr>
+            <tr><th scope="row">Identifiants de molécules distincts</th><td>601</td><td>193</td></tr>
+            <tr><th scope="row">Essais distincts</th><td>105</td><td>56</td></tr>
+            <tr><th scope="row">Documents distincts</th><td>98</td><td>45</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Critères d’inclusion issus de l’API ChEMBL. Mesure positive et finie, relation <code>=</code>, unité <code>nM</code>, essai de type <code>B</code> au format protéine unique (<code>BAO_0000357</code>), score d’assignation à une protéine unique de 9, SMILES canonique et identifiant de molécule renseignés. Les lignes portant une annotation de mutation ou un commentaire de validité sont écartées. <a class="note-ref" href="#ref-chembl-doc">[2]</a></p>
+      <p>Le plus grand essai IC<sub>50</sub>, <code>CHEMBL2338838</code>, réunit 73 identifiants de molécules. Pour le <i>K</i><sub>i</sub>, <code>CHEMBL872347</code> en réunit 20. Les valeurs censurées sont hors de cet inventaire et pourront être examinées séparément pour constituer les témoins. Des protocoles différents, des mesures répétées et plusieurs identifiants pour une même molécule parente peuvent affecter les comparaisons. Une annotation de mutation vide indique seulement que le champ est vide.</p>
+    </section>
+
+    <section class="note-section" aria-labelledby="protocole">
+      <h2 id="protocole">Protocole proposé</h2>
+      <ol class="note-steps">
+        <li><strong>Établir une référence 2D sur CPU.</strong> Calculer des empreintes Morgan de rayon 2 et classer les composés par similarité de Tanimoto avec les actifs du jeu d’apprentissage. Grouper les molécules parentes et les familles chimiques avant de séparer apprentissage et test. Évaluer par essai ou sur des essais dont la comparabilité a été vérifiée. Un modèle supervisé léger mérite un essai si le volume de données le permet. <a class="note-ref" href="#ref-splits">[3]</a></li>
+        <li><strong>Contrôler la géométrie autour du zinc.</strong> Réinsérer les ligands cristallographiques avec AutoDock Vina et la fonction de score AutoDock4Zn, adaptée aux sites au zinc. Dans les coordonnées de la chaîne A, les contacts Zn–O sont d’environ 2,06 et 2,19 Å pour <a href="atelier.html?structure=1HFC">1HFC (PLH)</a>, et 2,00 et 2,61 Å pour <a href="atelier.html?structure=1CGL">1CGL (0ED)</a>. Le critère proposé est un RMSD des atomes lourds inférieur à 2 Å pour la première pose, avec correction des symétries dans le repère du récepteur. Vérifier séparément la restitution des contacts au zinc. <a class="note-ref" href="#ref-pdb">[4]</a> <a class="note-ref" href="#ref-zinc">[5]</a></li>
+        <li><strong>Mesurer la qualité du classement.</strong> Comparer la similarité seule et le classement combinant similarité et docking sur le même ensemble de test, comprenant des composés faibles ou inactifs mesurés. Publier les décomptes et la précision aux dix premiers rangs (precision@10), avec un seuil de travail d’IC<sub>50</sub> ≤ 1 µM défini à l’avance. Indiquer combien de composés du test atteignent ce seuil. Une pose retrouvée et un ligand bien classé répondent à deux questions différentes. <a class="note-ref" href="#ref-casf">[6]</a></li>
+        <li><strong>Mesurer le coût avant d’élargir.</strong> Chronométrer un pilote d’environ 50 composés sur CPU. Hypothèse de dimensionnement ensuite : jusqu’à 5&#8239;000 composés classés en 2D, 300 en docking, 30 examinés sur les deux structures et une dizaine de candidats pour une évaluation prospective. Boltz‑2 peut servir de comparateur si le premier banc d’essai le justifie. La matrice NVIDIA annonce 48 Go de mémoire GPU minimum pour son déploiement NIM. <a class="note-ref" href="#ref-boltz">[7]</a> <a class="note-ref" href="#ref-nvidia">[8]</a></li>
+      </ol>
+      <p class="note-callout">Une precision@10 de 8/10 signifie que huit composés sur les dix premiers passeraient le seuil dans le jeu évalué. Ce serait un résultat de classement rétrospectif, distinct d’une probabilité de succès pour un nouveau ligand. L’objectif de 99,99&nbsp;% ne peut pas être estimé à partir de cet inventaire.</p>
+    </section>
+
+    <section class="note-section" aria-labelledby="reproductibilite">
+      <h2 id="reproductibilite">Reproductibilité</h2>
+      <p>L’export d’audit contient la version de ChEMBL, l’horodatage UTC, les requêtes et les effectifs. Le script Python utilise l’API publique et vérifie la version demandée. Pour le benchmark, archiver avant évaluation les identifiants retenus, les regroupements, le seuil, les versions logicielles, la graine, les paramètres et les temps de calcul.</p>
+      <div class="note-downloads">
+        <a class="button button-primary" href="assets/research/mmp1-audit-v1.json" download>Télécharger l’audit JSON</a>
+        <a class="button button-small" href="https://github.com/3M-Heroix/monaisec-molecular-lab/blob/main/research/audit_mmp1.py">Consulter le script</a>
+      </div>
+    </section>
+
+    <section class="note-section" aria-labelledby="references">
+      <h2 id="references">Références</h2>
+      <ol class="note-bibliography">
+        <li id="ref-chembl">Zdrazil et al. (2024). <a href="https://doi.org/10.1093/nar/gkad1004"><cite>The ChEMBL Database in 2023</cite></a>. Nucleic Acids Research. <a href="https://www.ebi.ac.uk/chembl/explore/target/CHEMBL332">Fiche CHEMBL332</a>.</li>
+        <li id="ref-chembl-doc">EMBL‑EBI. <a href="https://chembl.gitbook.io/chembl-interface-documentation/frequently-asked-questions/chembl-data-questions">Documentation des données ChEMBL</a> et <a href="https://chembl.gitbook.io/chembl-interface-documentation/web-services/chembl-data-web-services">API de recherche</a>.</li>
+        <li id="ref-splits">Wu et al. (2018). <a href="https://doi.org/10.1039/C7SC02664A"><cite>MoleculeNet: a benchmark for molecular machine learning</cite></a>. Chemical Science. <a href="https://www.rdkit.org/docs/GettingStartedInPython.html">Documentation RDKit</a>.</li>
+        <li id="ref-pdb">RCSB Protein Data Bank. Structures <a href="https://doi.org/10.2210/pdb1HFC/pdb">1HFC</a> et <a href="https://doi.org/10.2210/pdb1CGL/pdb">1CGL</a>.</li>
+        <li id="ref-zinc">Santos-Martins et al. (2014). <a href="https://doi.org/10.1021/ci500209e"><cite>AutoDock4Zn: An Improved AutoDock Force Field for Small-Molecule Docking to Zinc Metalloproteins</cite></a>. Journal of Chemical Information and Modeling. <a href="https://autodock-vina.readthedocs.io/en/latest/docking_zinc.html">Documentation AutoDock Vina</a>.</li>
+        <li id="ref-casf">Su et al. (2019). <a href="https://doi.org/10.1021/acs.jcim.8b00545"><cite>Comparative Assessment of Scoring Functions: The CASF-2016 Update</cite></a>. Journal of Chemical Information and Modeling.</li>
+        <li id="ref-boltz">Passaro et al. (2025). <a href="https://doi.org/10.1101/2025.06.14.659707"><cite>Boltz-2: Towards Accurate and Efficient Binding Affinity Prediction</cite></a>. bioRxiv, prépublication.</li>
+        <li id="ref-nvidia">NVIDIA. <a href="https://docs.nvidia.com/nim/bionemo/boltz2/support-matrix">Boltz‑2 NIM Support Matrix</a>.</li>
+      </ol>
+    </section>
+  </article>
+  </main>
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <a class="brand" href="index.html" aria-label="Monaisec Molecular Lab, accueil">
+        <span class="brand-icon"><img src="assets/logo-mark.webp" alt="" width="30" height="20"></span>
+        <span><strong>MONAISEC</strong><small>Molecular Lab</small></span>
+      </a>
+      <p>Recherche indépendante en modélisation moléculaire.</p>
+      <nav aria-label="Navigation de pied de page"><a href="atelier.html">Atelier 3D</a> <a href="cosmetique.html">Cosmétique</a> <a href="recherche.html">Recherche</a></nav>
+    </div>
+  </footer>
+</body>
+</html>
