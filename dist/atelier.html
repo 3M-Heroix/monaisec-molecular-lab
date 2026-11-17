@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Atelier 3D · Monaisec Molecular Lab</title>
+  <meta name="description" content="Visualisez des conformères PubChem, explorez la MMP-1 et importez vos structures moléculaires en 3D.">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="icon" href="assets/favicon.png" type="image/png">
+  <link rel="stylesheet" href="assets/fonts.css">
+  <link rel="stylesheet" href="assets/site.css">
+  <script defer src="assets/vendor/3Dmol-min.js"></script><script defer src="assets/canvas-viewer.js"></script><script defer src="assets/atelier.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Aller au contenu</a>
+  <header class="mast">
+    <div class="wrap topbar">
+      <a class="brand" href="index.html" aria-label="Monaisec Molecular Lab, accueil">
+        <span class="brand-icon"><img src="assets/logo-mark.webp" alt="" width="30" height="20"></span>
+        <span><strong>MONAISEC</strong><small>Molecular Lab</small></span>
+      </a>
+      <nav class="navigation" aria-label="Navigation principale"><a href="index.html">Accueil</a>
+<a href="atelier.html" aria-current="page">Atelier 3D</a>
+<a href="cosmetique.html">Cosmétique</a>
+<a href="recherche.html">Recherche</a></nav>
+      <a class="button button-small top-action" href="atelier.html">Ouvrir le labo <span aria-hidden="true">→</span></a>
+    </div>
+  </header>
+  <main id="main">
+  <section class="wrap intro workshop-intro">
+    <p class="eyebrow"><span class="signal"></span> Atelier moléculaire</p>
+    <h1>Explore la molécule<span class="accent-dot">.</span></h1>
+    <p class="lede">Choisis un exemple, recherche un composé public ou importe une structure. Fais tourner la scène pour examiner la géométrie sous plusieurs angles.</p>
+  </section>
+  <section class="wrap workbench" aria-label="Visionneuse moléculaire">
+    <aside class="catalog">
+      <h2>Bibliothèque</h2>
+      <div class="catalog-list" id="catalog-list" aria-label="Conformères de petites molécules"></div>
+      <h3>Complexes expérimentaux</h3>
+      <div class="catalog-list" id="crystal-list" aria-label="Structures cristallographiques"></div>
+      <details class="import-panel">
+        <summary>Importer un fichier</summary>
+        <p>SDF, MOL, PDB, CIF ou XYZ, jusqu’à 5 Mo. Le fichier reste dans ton navigateur.</p>
+        <label class="file-label" for="structure-file">Choisir un fichier</label>
+        <input id="structure-file" type="file" accept=".sdf,.mol,.pdb,.cif,.mmcif,.xyz">
+      </details>
+    </aside>
+    <div class="stage">
+      <div class="stage-head">
+        <div><p class="eyebrow" id="structure-type">Conformère calculé · PubChem</p><h2 id="structure-name">Niacinamide</h2></div>
+        <a id="structure-source" class="stage-source" href="https://pubchem.ncbi.nlm.nih.gov/compound/936" target="_blank" rel="noopener">Source <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="viewport">
+        <div id="molecular-canvas" role="img" aria-label="Représentation moléculaire 3D interactive"></div>
+        <p id="viewer-status" class="viewer-status" role="status">Chargement de la structure…</p>
+        <noscript><p class="viewer-status">Active JavaScript pour manipuler la structure 3D.</p></noscript>
+      </div>
+      <div class="viewer-tools" aria-label="Commandes 3D">
+        <div class="view-styles" id="view-styles" aria-label="Représentation"></div>
+        <div class="view-actions">
+          <button type="button" id="rotate" aria-pressed="false">Rotation</button>
+          <button type="button" id="reset-view">Recentrer</button>
+          <button type="button" id="download-structure">Télécharger</button>
+        </div>
+      </div>
+      <p class="viewer-instruction">Glisse pour faire pivoter · Molette ou pincement pour zoomer</p>
+      <p class="viewer-contacts" id="viewer-contacts" hidden></p>
+    </div>
+  </section>
+  <section class="wrap query-panel" aria-labelledby="query-heading">
+    <div>
+      <h2 id="query-heading">Chercher dans PubChem</h2>
+      <p>Entre un nom (l’anglais fonctionne le mieux), un CID ou un SMILES. La visionneuse charge le conformère 3D lorsque PubChem en propose un.</p>
+    </div>
+    <form id="compound-search">
+      <label for="search-kind" class="sr-only">Type de recherche</label>
+      <select id="search-kind"><option value="auto">Nom ou CID</option><option value="smiles">SMILES</option></select>
+      <label for="compound-query" class="sr-only">Nom, CID ou SMILES</label>
+      <input id="compound-query" name="query" type="search" required maxlength="250" placeholder="Ex. caffeine ou 2519">
+      <button class="button button-primary" type="submit">Rechercher</button>
+      <p class="search-status" id="search-status" role="status"></p>
+    </form>
+  </section>
+  <section class="wrap query-panel generator-panel" aria-labelledby="generate-heading">
+    <div>
+      <h2 id="generate-heading">Générer un modèle 3D</h2>
+      <p>Colle le SMILES d’une petite molécule. OpenChemLib calcule un conformère dans ton navigateur. Tu peux ensuite enregistrer la structure.</p>
+    </div>
+    <form id="conformer-form">
+      <label for="conformer-query" class="sr-only">SMILES de la molécule</label>
+      <input id="conformer-query" name="smiles" required maxlength="250" placeholder="Ex. OCC(O)CO">
+      <button class="button button-primary" type="submit">Générer</button>
+      <p class="search-status" id="conformer-status" role="status"></p>
+    </form>
+  </section>
+  <section class="wrap note-row">
+    <p><strong>À propos de la 3D.</strong> Un conformère PubChem est un modèle calculé d’une molécule isolée. Les fichiers PDB de la MMP‑1 représentent des complexes obtenus par cristallographie.</p>
+    <a class="text-link" href="recherche.html">Voir les sources et la méthode <span aria-hidden="true">→</span></a>
+  </section>
+</main>
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <a class="brand" href="index.html" aria-label="Monaisec Molecular Lab, accueil">
+        <span class="brand-icon"><img src="assets/logo-mark.webp" alt="" width="30" height="20"></span>
+        <span><strong>MONAISEC</strong><small>Molecular Lab</small></span>
+      </a>
+      <p>Recherche indépendante en modélisation moléculaire.</p>
+      <nav aria-label="Navigation de pied de page"><a href="atelier.html">Atelier 3D</a> <a href="cosmetique.html">Cosmétique</a> <a href="recherche.html">Recherche</a></nav>
+    </div>
+  </footer>
+</body>
+</html>
